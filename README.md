@@ -34,20 +34,28 @@ Kullanıcı şehir ismini yazarak Türkiye'deki iller arasından otomatik öneri
 
 ### 1. Depoyu klonla:
 
-'git clone https://github.com/kerimtetik/hava-durumu.git'
-'cd hava-durumu'
-
+```bash
+git clone https://github.com/kerimtetik/hava-durumu.git
+cd hava-durumu
+```
 
 ### 2. Bağımlılıkları yükle:
 
-'npm install'
+```bash
+npm install
+```
 
-###3. Geliştirme sunucusunu başlat:
-'npm run dev'
 
-###4. Tarayıcıda aç:
-'http://localhost:5173/'
+### 3. Geliştirme sunucusunu başlat:
 
+```bash
+npm run dev
+```
+
+### 4. Tarayıcıda aç:
+```bash
+http://localhost:5173/
+```
 
 🔑 API Anahtarı Ekleme
 Bu proje **[OpenWeatherMap API](https://openweathermap.org/api)** API kullanır.
@@ -60,5 +68,5 @@ App.jsx içinde aşağıdaki satırı güncelle:
 
 js
 Kodu kopyala
-'const apiKey = "BURAYA_KENDİ_API_KEYİNİ_YAZ";'
+const apiKey = "BURAYA_KENDİ_API_KEYİNİ_YAZ";
 
