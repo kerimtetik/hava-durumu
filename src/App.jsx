@@ -45,7 +45,7 @@ function App() {
       );
       const data = await response.json();
       if (data.cod === "404") {
-        alert("Şehir bulunamadı komutanım!");
+        alert("Şehir bulunamadı!");
         setWeather(null);
       } else {
         setWeather(data);
