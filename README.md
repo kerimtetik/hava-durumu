@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -14,3 +15,41 @@ The React Compiler is not enabled on this template because of its impact on dev 
 ## Expanding the ESLint configuration
 
 If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+=======
+# 🌤️ Hava Durumu Uygulaması (React)
+
+Bu proje, **React (Vite)** kullanılarak geliştirilmiş basit ama işlevsel bir **hava durumu uygulamasıdır.**  
+Kullanıcı şehir ismini yazarak Türkiye'deki iller arasından otomatik öneri alır ve seçtiği şehrin anlık hava durumu bilgisini görüntüler.
+
+---
+
+## 🚀 Özellikler
+- 🔍 **Otomatik şehir tamamlama:** Yazdıkça Türkiye’deki iller filtrelenir.  
+- ⌨️ **Klavyeyle kontrol:** Yön tuşlarıyla önerilerde gezilebilir, Enter ile seçim yapılabilir.  
+- ☀️ **Anlık hava durumu:** OpenWeatherMap API üzerinden sıcaklık, nem, rüzgar, görünürlük vb. bilgiler çekilir.  
+- 🌅 **Ek bilgiler:**  
+  - Gün doğumu / Gün batımı  
+  - Hissedilen sıcaklık  
+  - Görüş uzaklığı  
+  - Rüzgar yönü ve hızı (km/s)  
+- 🎨 **Dinamik arka plan:** Hava durumuna göre renk geçişleri.
+
+---
+
+## 🛠️ Kullanılan Teknolojiler
+| Teknoloji | Açıklama |
+|------------|-----------|
+| **React (Vite)** | Ön yüz framework'ü |
+| **JavaScript (ES6+)** | İş mantığı ve etkileşim |
+| **OpenWeatherMap API** | Hava durumu verisi kaynağı |
+| **CSS (inline styles)** | Hızlı ve basit stil yapısı |
+
+---
+
+## ⚙️ Kurulum ve Çalıştırma
+
+### 1. Depoyu klonla:
+```bash
+git clone https://github.com/kerimtetik/hava-durumu.git
+cd hava-durumu
+>>>>>>> 12e0775612c069cc467b94d598c3bd9c8b06c29d
