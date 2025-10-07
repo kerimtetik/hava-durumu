@@ -70,3 +70,7 @@ js
 Kodu kopyala
 const apiKey = "BURAYA_KENDİ_API_KEYİNİ_YAZ";
 
+## 📸 Ekran Görüntüsü
+![Hava Durumu Uygulaması](public/ss.png)
+
+
