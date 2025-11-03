@@ -43,7 +43,7 @@ function App() {
   const [filtered, setFiltered] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [weather, setWeather] = useState(null);
-  const apiKey = "9e67a56d890f65a5449408a6f2bf61e7";
+  const apiKey = "Buraya kendi Api kodun";
 
   const handleInput = (e) => {
     const value = e.target.value;
