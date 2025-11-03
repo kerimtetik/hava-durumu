@@ -1,4 +1,17 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
+import "leaflet/dist/leaflet.css";
+import L from "leaflet";
+
+// 📍 Leaflet default marker için düzeltme
+const customIcon = new L.Icon({
+  iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/images/marker-icon.png",
+  shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.3/images/marker-shadow.png",
+  iconSize: [25, 41],
+  iconAnchor: [12, 41],
+  popupAnchor: [1, -34],
+  shadowSize: [41, 41],
+});
 
 const cities = [
   "Adana","Adıyaman","Afyonkarahisar","Ağrı","Aksaray","Amasya","Ankara","Antalya",
@@ -13,14 +26,25 @@ const cities = [
   "Trabzon","Tunceli","Uşak","Van","Yalova","Yozgat","Zonguldak"
 ];
 
+// 🌍 Harita FlyTo bileşeni
+function FlyToLocation({ coords }) {
+  const map = useMap();
+  useEffect(() => {
+    if (coords) {
+      map.flyTo(coords, 8, { duration: 2 });
+    }
+  }, [coords, map]);
+  return null;
+}
+
 function App() {
+  const [mapCenter, setMapCenter] = useState([39.925533, 32.866287]); // Ankara
   const [city, setCity] = useState("");
   const [filtered, setFiltered] = useState([]);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const [weather, setWeather] = useState(null);
-  const apiKey = "BURAYA KENDİ API ANAHTARINIZI EKLEYİN";
+  const apiKey = "9e67a56d890f65a5449408a6f2bf61e7";
 
-  // 🔍 Input değişince filtrele
   const handleInput = (e) => {
     const value = e.target.value;
     setCity(value);
@@ -35,7 +59,6 @@ function App() {
     }
   };
 
-  // 🔹 Hava durumu çek
   const getWeather = async (selectedCity) => {
     const targetCity = selectedCity || city;
     if (!targetCity) return;
@@ -45,19 +68,20 @@ function App() {
       );
       const data = await response.json();
       if (data.cod === "404") {
-        alert("Şehir bulunamadı!");
+        alert("Şehir bulunamadı komutanım!");
         setWeather(null);
       } else {
         setWeather(data);
         setFiltered([]);
-        setCity(""); // 🔥 Enter sonrası input’u temizle
+        setCity("");
+        // 🌍 Şehrin koordinatlarını merkeze ayarla
+        setMapCenter([data.coord.lat, data.coord.lon]);
       }
     } catch (error) {
       console.error("Hava durumu alınamadı:", error);
     }
   };
 
-  // 🔹 Klavye kontrolü
   const handleKeyDown = (e) => {
     if (e.key === "ArrowDown") {
       e.preventDefault();
@@ -70,29 +94,26 @@ function App() {
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (selectedIndex >= 0 && filtered[selectedIndex]) {
-        const chosen = filtered[selectedIndex];
-        getWeather(chosen);
+        getWeather(filtered[selectedIndex]);
       } else {
         getWeather(city);
       }
     }
   };
 
-   // 🔹 Rüzgar yönünü metinle göster
   const getWindDirection = (deg) => {
-    if (deg > 337.5 || deg <= 22.5) return "Kuzey";
-    if (deg > 22.5 && deg <= 67.5) return "Kuzeydoğu";
-    if (deg > 67.5 && deg <= 112.5) return "Doğu";
-    if (deg > 112.5 && deg <= 157.5) return "Güneydoğu";
-    if (deg > 157.5 && deg <= 202.5) return "Güney";
-    if (deg > 202.5 && deg <= 247.5) return "Güneybatı";
-    if (deg > 247.5 && deg <= 292.5) return "Batı";
-    if (deg > 292.5 && deg <= 337.5) return "Kuzeybatı";
+    if (deg > 337.5 || deg <= 22.5) return "North";
+    if (deg > 22.5 && deg <= 67.5) return "Northeast";
+    if (deg > 67.5 && deg <= 112.5) return "East";
+    if (deg > 112.5 && deg <= 157.5) return "Southeast";
+    if (deg > 157.5 && deg <= 202.5) return "South";
+    if (deg > 202.5 && deg <= 247.5) return "Southwest";
+    if (deg > 247.5 && deg <= 292.5) return "West";
+    if (deg > 292.5 && deg <= 337.5) return "Northwest";
   };
 
-  // Arka plan rengi duruma göre değişiyor
   const getBackground = () => {
-    if (!weather) return "#74b9ff"; // default mavi
+    if (!weather) return "#74b9ff";
     const condition = weather.weather[0].main.toLowerCase();
     if (condition.includes("clear")) return "#f1c40f";
     if (condition.includes("cloud")) return "#95a5a6";
@@ -101,14 +122,12 @@ function App() {
     return "#74b9ff";
   };
 
-   // 🔹 Unix zamanını saat formatına çevir
   const formatTime = (unix) => {
-    return new Date(unix * 1000).toLocaleTimeString("tr-TR", {
+    return new Date(unix * 1000).toLocaleTimeString("en-GB", {
       hour: "2-digit",
       minute: "2-digit",
     });
   };
-
 
   return (
     <div
@@ -118,21 +137,14 @@ function App() {
         transition: "background-color 0.5s ease",
       }}
     >
-      <div
-        style={{
-          ...styles.card,
-          borderColor: getBackground(),
-          borderWidth: "2px",
-          borderStyle: "solid",
-        }}
-      >
-        <h1>🌤️ Hava Durumu</h1>
+      <div style={styles.card}>
+        <h1>🌍 Global Weather Map</h1>
 
-        {/* 🔍 Arama Input */}
+        {/* 🔍 Input */}
         <div style={{ position: "relative" }}>
           <input
             type="text"
-            placeholder="Şehir giriniz..."
+            placeholder="Enter a city name..."
             value={city}
             onChange={handleInput}
             onKeyDown={handleKeyDown}
@@ -148,8 +160,7 @@ function App() {
                     ...styles.suggestionItem,
                     backgroundColor:
                       index === selectedIndex ? "#dfe6e9" : "white",
-                    fontWeight:
-                      index === selectedIndex ? "bold" : "normal",
+                    fontWeight: index === selectedIndex ? "bold" : "normal",
                   }}
                 >
                   {item}
@@ -159,24 +170,39 @@ function App() {
           )}
         </div>
 
+        {/* 🗺️ Harita */}
+        <div style={{ height: "300px", marginTop: "20px", borderRadius: "10px", overflow: "hidden" }}>
+          <MapContainer center={mapCenter} zoom={5} style={{ height: "100%", width: "100%" }}>
+            {/* İngilizce Etiketli Tile Layer */}
+            <TileLayer
+              url="https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png"
+              attribution='&copy; <a href="https://carto.com/attributions">CARTO</a> | English Labels'
+            />
+            <FlyToLocation coords={mapCenter} />
+            <Marker position={mapCenter} icon={customIcon}>
+              <Popup>{weather ? weather.name : "Location"}</Popup>
+            </Marker>
+          </MapContainer>
+        </div>
+
         {weather && (
           <div style={styles.result}>
             <h2>{weather.name}</h2>
             <img
               src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`}
-              alt="ikon"
+              alt="icon"
             />
             <p>{weather.weather[0].description.toUpperCase()}</p>
             <h3>🌡️ {Math.round(weather.main.temp)} °C</h3>
-            <p>🤒 Hissedilen: {Math.round(weather.main.feels_like)} °C</p>
-            <p>💧 Nem: {weather.main.humidity}%</p>
-            <p> 💨 Rüzgar: {(weather.wind.speed * 3.6).toFixed(1)} km/s (
+            <p>Feels like: {Math.round(weather.main.feels_like)} °C</p>
+            <p>Humidity: {weather.main.humidity}%</p>
+            <p>
+              Wind: {(weather.wind.speed * 3.6).toFixed(1)} km/h (
               {getWindDirection(weather.wind.deg)})
             </p>
-            <p>👁️ Görüş Uzaklığı: {(weather.visibility / 1000).toFixed(1)} km</p>
-            <p>🌅 Gün Doğumu: {formatTime(weather.sys.sunrise)}</p>
-            <p>🌇 Gün Batımı: {formatTime(weather.sys.sunset)}</p>
-
+            <p>Visibility: {(weather.visibility / 1000).toFixed(1)} km</p>
+            <p>Sunrise: {formatTime(weather.sys.sunrise)}</p>
+            <p>Sunset: {formatTime(weather.sys.sunset)}</p>
           </div>
         )}
       </div>
@@ -191,7 +217,6 @@ const styles = {
     justifyContent: "center",
     alignItems: "center",
     fontFamily: "Poppins, sans-serif",
-    backgroundColor: "#74b9ff",
   },
   card: {
     backgroundColor: "rgba(255,255,255,0.9)",
@@ -199,7 +224,7 @@ const styles = {
     borderRadius: "15px",
     textAlign: "center",
     boxShadow: "0 8px 20px rgba(0,0,0,0.2)",
-    width: "320px",
+    width: "340px",
   },
   input: {
     width: "100%",
